@@ -17,8 +17,9 @@ double ArrondisD(double value, unsigned char prec);
 
 void UberShow(string typeUber, const char horizontal, const char TotalWidht);
 
-int main() {
+double TVACalcul(double TauxTVA, double Prix);
 
+int main() {
 
     cout << "Quel uber? Entrez 1 pour X, 2 pour POP ou 3 pour BLACK" << endl;
     int ChoixUber = 0;
@@ -82,7 +83,7 @@ int main() {
                 break;
 
         }
-        TVA = annulationfrais - (annulationfrais/(1+TauxTVA));
+        TVA = TVACalcul(TauxTVA, annulationfrais);
         cout << endl;//separation de la question et du tableau
 
         Verticalbord(coin, vertical, TotalWidht);
@@ -111,7 +112,7 @@ int main() {
         kmparcourus = ArrondisD(kmparcourus,1);
         cout << endl;//separation de la question et du tableau
 
-        bool CourseMinTrue = false;
+        bool CourseMinbool = false;
         double Prixbase = 3.0;
         double Prixkm = 0.0;
         double Prixdistance = 0.0;
@@ -141,16 +142,12 @@ int main() {
 
         if(Prixfinal < Prixminimal)
         {
-            CourseMinTrue = true;
+            CourseMinbool = true;
         }
         else
         {
-            TVA = Prixfinal - (Prixfinal/(1+TauxTVA));
+            TVA = TVACalcul(TauxTVA, Prixfinal);
         }
-
-
-
-
 
         Verticalbord(coin, vertical, TotalWidht);
         spacetable(space, horizontal, TotalWidht);
@@ -173,12 +170,12 @@ int main() {
         TextNum(horizontal, SEPARATOR,TotalWidht,"Prix temps",Prixtemps);
         TextNum(horizontal, SEPARATOR,TotalWidht,"Total",Prixfinal);
         spacetable(space, horizontal, TotalWidht);
-        if(CourseMinTrue == true)
+        if(CourseMinbool == true)
         {
             TextNum(horizontal, SEPARATOR,TotalWidht,"Course minimale",Prixminimal);
             spacetable(space, horizontal, TotalWidht);
             Prixfinal = Prixminimal;
-            TVA = Prixfinal - (Prixfinal/(1+TauxTVA));
+            TVA = TVACalcul(TauxTVA, Prixfinal);
         }
         TextNum(horizontal, SEPARATOR,TotalWidht,"Prix",Prixfinal);
         TextNum(horizontal, SEPARATOR,TotalWidht,"(incl. TVA)",TVA);
@@ -188,6 +185,8 @@ int main() {
     }
     return 0;
 }
+
+double TVACalcul(double TauxTVA, double Prix) { return Prix - (Prix / (1 + TauxTVA)); }
 
 void UberShow(const string typeUber, const char horizontal, const char TotalWidht) {
     string firsthalfword = typeUber.substr(0,typeUber.length()/2);
@@ -216,7 +215,7 @@ void spacetable(const char space, const char horizontal, const char W) {
 }
 
 void Verticalbord(const char coin, const char vertical, const char W){
-    cout << coin << setfill(vertical) << setw(W-1) << coin << endl;
+    cout << coin << right << setfill(vertical) << setw(W-1) << coin << endl;
 }
 
 double ArrondisD(double value, unsigned char prec)
