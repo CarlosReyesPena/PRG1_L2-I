@@ -1,10 +1,13 @@
 
+//Libreries pour la gestion des string et des opérations mathematiques.
 #include <iostream>
 #include <iomanip>
 #include <cmath>
 
 using namespace std;
 
+
+//prototypes des fonctions d'affichage et d'arrondi.
 void Verticalbord(const char coin, const char vertical, const char W);
 
 void spacetable(const char space, const char horizontal, const char W);
@@ -191,22 +194,49 @@ double TVACalcul(double TauxTVA, double Prix) { return Prix - (Prix / (1 + TauxT
 void UberShow(const string typeUber, const char horizontal, const char TotalWidht) {
     string firsthalfword = typeUber.substr(0,typeUber.length()/2);
     string secondhalfword = typeUber.substr(typeUber.length()/2,typeUber.length()/2 + 1);
+    if((TotalWidht % 2)/*paire?*/ == 0)
+    {
+        cout << horizontal << right << setw(TotalWidht / 2 - 1) << firsthalfword << left << setw(TotalWidht / 2 - 1)
+             << secondhalfword << horizontal << endl;
+    }
+    else
+    {
+        cout << horizontal << right << setw(TotalWidht / 2 - 1) << firsthalfword << left << setw(TotalWidht / 2 - 1)
+             << secondhalfword <<' '<< horizontal << endl;
+    }
 
-    cout << horizontal << right << setw(TotalWidht / 2 - 1) << firsthalfword << left << setw(TotalWidht / 2 - 1)
-     << secondhalfword << horizontal << endl;
 }
 
-void TextNum( const char horizontal, const char SEPARATOR, const char TotalWidht, string text, double Num ) {
+void TextNum( const char horizontal, const char SEPARATOR, const char TotalWidht, string text, double Num )
+{
     const char space = ' ';
-    cout << horizontal << space << left << setw(TotalWidht*2/3-4/*2 spaces*/) << text  << space << SEPARATOR
-     << space << right << setw(TotalWidht/3 - 3) << Num << space << horizontal << endl;
+    cout << setfill(space);
+
+    if((TotalWidht % 3)/*divisible par 3?*/ == 0){
+        cout << horizontal << space << left << setw(TotalWidht*2/3-4/*2 spaces*/) << text  << space << SEPARATOR
+             << space << right << setw(TotalWidht/3 - 3) << Num << space << horizontal << endl;
+    }
+    else
+    {
+        cout << horizontal << space << left << setw(TotalWidht*2/3-4/*2 spaces*/) << text  << space << SEPARATOR
+             << space << right << setw(TotalWidht/3 - 2) << Num << space << horizontal << endl;
+    }
 }
 void TextNum( const char horizontal, const char SEPARATOR, const char TotalWidht, string text, double Num,string unite )
 {
     const char space = ' ';
-    cout << horizontal << space << left << setw(TotalWidht*2/3-4/*2 spaces*/) << text  << space << SEPARATOR
-         << space << right << setw(TotalWidht/3 -(4+unite.length())) << Num << space
-         << unite << space << horizontal << endl;
+    cout << setfill(space);
+    if((TotalWidht % 3)/*divisible par 3?*/ == 0) {
+        cout << horizontal << space << left << setw(TotalWidht * 2 / 3 - 4/*2 spaces*/) << text << space << SEPARATOR
+             << space << right << setw(TotalWidht / 3 - (4 + unite.length())) << Num << space
+             << unite << space << horizontal << endl;
+    }
+    else
+    {
+        cout << horizontal << space << left << setw(TotalWidht * 2 / 3 - 4/*2 spaces*/) << text << space << SEPARATOR
+             << space << right << setw(TotalWidht / 3 - (3 + unite.length())) << Num << space
+             << unite << space << horizontal << endl;
+    }
 }
 
 void spacetable(const char space, const char horizontal, const char W) {
