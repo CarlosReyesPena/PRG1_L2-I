@@ -22,6 +22,8 @@ void UberShow(string typeUber, const char horizontal, const char TotalWidht);
 
 double TVACalcul(double TauxTVA, double Prix);
 
+double CalculsPrix(int ChoixUber, double kmparcourus, double MinutesEcoulees);
+
 int main() {
 
     cout << "Quel uber? Entrez 1 pour X, 2 pour POP ou 3 pour BLACK" << endl;
@@ -187,6 +189,29 @@ int main() {
 
     }
     return 0;
+}
+
+//fonction calculs prix
+double CalculsPrix(int ChoixUber, double kmparcourus, double MinutesEcoulees)
+{
+    double prixBase = 3.00; //pour UberX et UberPOP
+    double prixKilometre = 1.80; //pour UberX
+    double prixMinute = 0.30; //pour UberX et UberPOP
+    double prixMinimum = 6.00; //pour UberX et UberPOP
+    if (ChoixUber == 3){
+        prixBase = 8.00;
+        prixKilometre = 3.60;
+        prixMinute = 0.60;
+        prixMinimum = 15.00;
+    }
+    else if (ChoixUber == 2){
+        prixKilometre = 1.35;
+    }
+    double prixDistance = prixKilometre * kmparcourus;
+    double prixTemps = prixMinute * MinutesEcoulees;
+    double prixCourse = prixBase + prixDistance + prixTemps;
+    prixCourse = prixCourse < prixMinimum? prixCourse = prixMinimum : prixCourse;
+    return prixCourse;
 }
 
 double TVACalcul(double TauxTVA, double Prix) { return Prix - (Prix / (1 + TauxTVA)); }
