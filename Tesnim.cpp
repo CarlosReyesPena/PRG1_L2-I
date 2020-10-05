@@ -8,7 +8,7 @@ using namespace std;
 
 double calculTVA(double prixCourse, double TAUX_TVA_POURCENT);
 
-double CalculsPrix(int uberChoisi, double distanceParcourue, double minutesEcoulees);
+double calculsPrix(int choixUber, double distanceParcourue, double minutesEcoulees);
 
 void bordureHorizontale(const char W_TOTAL, const char PLUS, const char TIRET);
 
@@ -107,23 +107,23 @@ void bordureVerticale(const char W_TOTAL, const char BARREVERTICALE, const char 
 
 
 //fonction calculs prix
-double CalculsPrix(int uberChoisi, double distanceParcourue, double tempsEcoulees)
+double calculsPrix(int uberChoisi, double distanceParcourue, double tempsEcoulees)
 {
     double prixBase = 3.00; //pour UberX et UberPOP
     double prixKilometre = 1.80; //pour UberX
     double prixMinute = 0.30; //pour UberX et UberPOP
     double prixMinimum = 6.00; //pour UberX et UberPOP
-    if (uberChoisi == 3){
+    if (choixUber == 3){
         prixBase = 8.00;
         prixKilometre = 3.60;
         prixMinute = 0.60;
         prixMinimum = 15.00;
     }
-    else if (uberChoisi == 2){
+    else if (choixUber == 2){
         prixKilometre = 1.35;
     }
-    double prixDistance = prixKilometre * distanceParcourue;
-    double prixTemps = prixMinute * tempsEcoulees;
+    double prixDistance = prixKilometre * kmparcourus;
+    double prixTemps = prixMinute * MinutesEcoulees;
     double prixCourse = prixBase + prixDistance + prixTemps;
     prixCourse = prixCourse < prixMinimum? prixCourse = prixMinimum : prixCourse;
     return prixCourse;

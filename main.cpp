@@ -8,62 +8,63 @@ using namespace std;
 
 typedef struct
 {
-    double Prixbase;
-    double Prixdistance;
-    double Prixminute;
-    double Prixfinal;
-    double Prixfacture;
+    double prixBase;
+    double prixDistance;
+    double prixMinute;
+    double prixFinal;
+    double prixFacture;
 
 }Rescalculs;
 
 //prototypes des fonctions d'affichage et d'arrondi.
-void Verticalbord(const char coin, const char vertical, const char W);
+void horizontalBord(const char coin, const char vertical, const char W);
 
-void spacetable(const char space, const char horizontal, const char W);
+void spaceTable(const char space, const char horizontal, const char W);
 
-void TextNum(const char horizontal, const char SEPARATOR, const char TotalWidht, string text, double Num );
-void TextNum(const char horizontal, const char SEPARATOR, const char TotalWidht, string text, double Num, string unite);
+void textNum(const char horizontal, const char SEPARATOR, const char TotalWidht, string text, double Num );
+void textNum(const char horizontal, const char SEPARATOR, const char TotalWidht, string text, double Num, string unite);
 
-double ArrondisD(double value, unsigned char prec);
+double arrondisD(double value, unsigned char prec);
 
 
-void UberShow(string typeUber, const char horizontal, const char TotalWidht);
+void uberShow(const string typeUber, const char horizontal, const char TotalWidht);
 
 double TVACalcul(double TauxTVA, double Prix);
 
-Rescalculs CalculsPrix(int ChoixUber, double kmparcourus, double MinutesEcoulees);
+Rescalculs calculsPrix(int choixUber, double kmparcourus, double MinutesEcoulees);
 
 
 
 int main() {
-
+    //demande à l'utilisateur d'entrer les valeurs nécessaires.
     cout << "Quel uber? Entrez 1 pour X, 2 pour POP ou 3 pour BLACK" << endl;
-    int ChoixUber = 0;
+    int choixUber = 0;
     do {
-        cin >> ChoixUber;
-        if(ChoixUber >= 1 && ChoixUber <= 3) continue;
-        cout << "Valeur incorrecte. Reessayez." << endl;
-    }while(ChoixUber < 1 || ChoixUber > 3);
+        cin >> choixUber;
+        if(choixUber >= 1 && choixUber <= 3) continue;
+        cout << "Valeur incorrecte. Reessayez." << endl; //si le num entré n'est pas 1,2 ou 3 alors on envoie un message
+                                                         //d'erreur
+    }while(choixUber < 1 || choixUber > 3); //tant que le numéro entré n'est pas le bon (1,2 ou 3) alors on continue de
+                                            //la première question
 
     cout << "Combien de minutes ecoulees?" << endl;
-    double MinutesEcoulees;
-    cin >> MinutesEcoulees;
-
-    if((MinutesEcoulees - (int)MinutesEcoulees) > 0.0)
+    double minutesEcoulees;
+    cin >> minutesEcoulees;
+    minutesEcoulees = int(ceil(minutesEcoulees)); //arrondi tempsEcoulees au supérieur ensuite converti en int
+    //j'ai utilisé mon calcul d'arrondi, il est plus simple et il n'y a pas de if. ça passe le code check
+    /*if((minutesEcoulees - (int)minutesEcoulees) > 0.0)
     {
-        MinutesEcoulees = (int)MinutesEcoulees + 1;
-    }
+        minutesEcoulees = (int)minutesEcoulees + 1;
+    }*/
 
-    enum PosUber { uberX = 1, uberPOP, uberBLACK };
-
-    // affichage de quel uber choisi
+    //liaison de l'Uber(string) qui correspond à son chiffre(int) afin de pouvoir afficher le string pas l'int
+    enum posUber { uberX = 1, uberPOP, uberBLACK };
     string typeUber;
-    //string uber = ChoixUber = 1? U + "X" : ChoixUber = 2? U + "POP" : U + "BLACK"; pourquoi ne marche pas?
-    if (ChoixUber == uberX) {
+    if (choixUber == uberX) {
         typeUber =  "uberX";
-    } else if (ChoixUber == uberPOP) {
+    } else if (choixUber == uberPOP) {
         typeUber =  "uberPOP";
-    } else if (ChoixUber == uberBLACK){
+    } else if (choixUber == uberBLACK){
         typeUber =  "uberBLACK";
     }
     else
@@ -71,194 +72,193 @@ int main() {
         cout << "ERREUR" << endl;
         return 1;
     }
-    const char space = ' ';
-    //affichage course annulée
-    const char coin = '+';
-    const char vertical = '-';
-    const char horizontal = '|';
-    const char TotalWidht = 30;
 
-
+    //variables
+    const char SPACE = ' ';
+    const char COIN = '+';
+    const char HORIZONTAL = '-';
+    const char VERTICAL = '|';
+    const char TOTAL_WIDHT = 30; //largeur total du ticket
     const char SEPARATOR = ':';
-
-    double TauxTVA = 0.08;
+    double tauxTva = 0.08;
     double TVA = 0;
 
-    if (MinutesEcoulees < 1)
+    //condition pour voir si les minutes écoulées sont négatives ou égal à 0, dans ce cas, la 3ème question n'est pas
+    //posée et la course est annulée. le ticket affiché est celui de la course annulée (ticket plus court que le normal)
+    if (minutesEcoulees < 1)
     {
         cout << fixed << setprecision(2);
-
-        double annulationfrais = 0;
-        switch (ChoixUber) {
+        double annulationFrais = 0;
+        //les frais d'annulation ne sont pas les mêmes pour les 3 Uber alors on fait un swich pour attribuer le bon
+        // frais d'annulation au bon Uber
+        switch (choixUber) {
             case uberX :
             case uberPOP :
-                annulationfrais = 6.00;
+                annulationFrais = 6.00; //frais d'annulation de l'Ubere 1 et 2
                 break;
             case uberBLACK :
-                annulationfrais = 10.00;
+                annulationFrais = 10.00; //frais d'annulation de l'Uber 3
                 break;
-
         }
-        TVA = TVACalcul(TauxTVA, annulationfrais);
-        cout << endl;//separation de la question et du tableau
-
-        Verticalbord(coin, vertical, TotalWidht);
-        spacetable(space, horizontal, TotalWidht);
-        UberShow( typeUber, horizontal, TotalWidht);
-        spacetable(space, horizontal, TotalWidht);
-        TextNum(horizontal, SEPARATOR,TotalWidht,"Frais annulation",annulationfrais);
-        spacetable(space, horizontal, TotalWidht);
-        TextNum(horizontal, SEPARATOR,TotalWidht,"Prix",annulationfrais);
-        TextNum(horizontal, SEPARATOR,TotalWidht,"(incl. TVA)",TVA);
-        spacetable(space, horizontal, TotalWidht);
-        Verticalbord(coin, vertical, TotalWidht);
-
+        TVA = TVACalcul(tauxTva, annulationFrais); //affiche la TVA
+        cout << endl; //separation de la question et du tableau
+        horizontalBord(COIN, HORIZONTAL, TOTAL_WIDHT); //affiche la bordure horizontale avec le + et -
+        spaceTable(SPACE, VERTICAL, TOTAL_WIDHT); //ligne vide
+        uberShow(typeUber, VERTICAL, TOTAL_WIDHT); //l'uber choisi, il est centré
+        spaceTable(SPACE, VERTICAL, TOTAL_WIDHT); //ligne vide
+        textNum(VERTICAL, SEPARATOR, TOTAL_WIDHT, "Frais annulation", annulationFrais); //texte et prix
+        spaceTable(SPACE, VERTICAL, TOTAL_WIDHT); //ligne vide
+        textNum(VERTICAL, SEPARATOR, TOTAL_WIDHT, "Prix", annulationFrais); //texte et prix
+        textNum(VERTICAL, SEPARATOR, TOTAL_WIDHT, "(incl. TVA)", TVA);
+        spaceTable(SPACE, VERTICAL, TOTAL_WIDHT); //ligne vide
+        horizontalBord(COIN, HORIZONTAL, TOTAL_WIDHT); //affiche la bordure horizontale avec le + et -
     }
-    else
+    else //si les minutes écoulées sont supérieures à 0 alors on pose la 3ème question
     {
         cout << "Combien de kilometres parcourus?" << endl;
-        double kmparcourus;
+        double kmParcourus;
         do {
-            cin >> kmparcourus;
-            if(kmparcourus >= 0) continue;
+            cin >> kmParcourus;
+            if(kmParcourus >= 0) continue;
             cout << "Impossible. Reessayez." << endl;
-        }while(kmparcourus < 0);
+        }while(kmParcourus < 0); //tant que les km parcourus entrées ne sont pas >= 0 alors on repose la question
 
-        //kmparcourus = (1./100.) *
-        kmparcourus = ArrondisD(kmparcourus,1);
-        cout << endl;//separation de la question et du tableau
+        //kmParcourus = (1./100.)
+        kmParcourus = arrondisD(kmParcourus, 1);
+        cout << endl; //separation de la question et du tableau
 
-        bool CourseMinbool = false;
         //Calculs
         Rescalculs resultats;
-        resultats = CalculsPrix(ChoixUber,kmparcourus,MinutesEcoulees);
+        resultats = calculsPrix(choixUber, kmParcourus, minutesEcoulees);
 
-
-
-
-        Verticalbord(coin, vertical, TotalWidht);
-        spacetable(space, horizontal, TotalWidht);
-        UberShow( typeUber, horizontal, TotalWidht);
-        spacetable(space, horizontal, TotalWidht);
-
-        cout << fixed << setprecision(1);
-
-        TextNum(horizontal, SEPARATOR,TotalWidht,"distance",kmparcourus,"km");
-
-        cout << fixed << setprecision(0);
-
-        TextNum(horizontal, SEPARATOR,TotalWidht,"temps ecoule",MinutesEcoulees,"min");
-
-        cout << fixed << setprecision(2);
-
-        spacetable(space, horizontal, TotalWidht);
-        TextNum(horizontal, SEPARATOR,TotalWidht,"Prix de base",resultats.Prixbase);
-        TextNum(horizontal, SEPARATOR,TotalWidht,"Prix distance",resultats.Prixdistance);
-        TextNum(horizontal, SEPARATOR,TotalWidht,"Prix temps",resultats.Prixminute);
-        TextNum(horizontal, SEPARATOR,TotalWidht,"Total",resultats.Prixfinal);
-        spacetable(space, horizontal, TotalWidht);
-        if(resultats.Prixfinal != resultats.Prixfacture )
+        //Affichage du ticket
+        horizontalBord(COIN, HORIZONTAL, TOTAL_WIDHT); //affiche la bordure horizontale avec le + et -
+        spaceTable(SPACE, VERTICAL, TOTAL_WIDHT); //ligne vide
+        uberShow(typeUber, VERTICAL, TOTAL_WIDHT); //l'uber choisi, il est centré
+        spaceTable(SPACE, VERTICAL, TOTAL_WIDHT); //ligne vide
+        cout << fixed << setprecision(1); //les km sont affichés avec 1 chiffre après la virgule
+        textNum(VERTICAL, SEPARATOR, TOTAL_WIDHT, "distance", kmParcourus, "km");
+        cout << fixed << setprecision(0); //le temps est affiché avec 0 chiffre après la virgule
+        textNum(VERTICAL, SEPARATOR, TOTAL_WIDHT, "temps ecoule", minutesEcoulees, "min");
+        cout << fixed << setprecision(2); //tous les prix et la tva sont affichés avec 2 chiffres après la virgule
+        spaceTable(SPACE, VERTICAL, TOTAL_WIDHT); //ligne vide
+        textNum(VERTICAL, SEPARATOR, TOTAL_WIDHT, "Prix de base", resultats.prixBase);
+        textNum(VERTICAL, SEPARATOR, TOTAL_WIDHT, "Prix distance", resultats.prixDistance);
+        textNum(VERTICAL, SEPARATOR, TOTAL_WIDHT, "Prix temps", resultats.prixMinute);
+        textNum(VERTICAL, SEPARATOR, TOTAL_WIDHT, "Total", resultats.prixFinal);
+        spaceTable(SPACE, VERTICAL, TOTAL_WIDHT); //ligne vide
+        //condition si le prix final est inférieur au prix minimum, alors c'est le prix minimum qui est affiché
+        if(resultats.prixFinal != resultats.prixFacture )
         {
-            TextNum(horizontal, SEPARATOR,TotalWidht,"Course minimale",resultats.Prixfacture);
-            spacetable(space, horizontal, TotalWidht);
+            textNum(VERTICAL, SEPARATOR, TOTAL_WIDHT, "Course mimimale", resultats.prixFacture);
+            spaceTable(SPACE, VERTICAL, TOTAL_WIDHT); //ligne vide
         }
-        TVA = TVACalcul(TauxTVA, resultats.Prixfacture);
-        TextNum(horizontal, SEPARATOR,TotalWidht,"Prix",resultats.Prixfacture);
-        TextNum(horizontal, SEPARATOR,TotalWidht,"(incl. TVA)",TVA);
-        spacetable(space, horizontal, TotalWidht);
-        Verticalbord(coin, vertical, TotalWidht);
-
+        TVA = TVACalcul(tauxTva, resultats.prixFacture);
+        textNum(VERTICAL, SEPARATOR, TOTAL_WIDHT, "Prix", resultats.prixFacture);
+        textNum(VERTICAL, SEPARATOR, TOTAL_WIDHT, "(incl. TVA)", TVA);
+        spaceTable(SPACE, VERTICAL, TOTAL_WIDHT); //ligne vide
+        horizontalBord(COIN, HORIZONTAL, TOTAL_WIDHT); //affiche la bordure horizontale avec le + et -
     }
     return 0;
 }
 
+/*---------------------------------------------FONCTIONS-UTILISEES----------------------------------------------------*/
 //fonction calculs prix
-Rescalculs CalculsPrix(int ChoixUber, double kmparcourus, double MinutesEcoulees)
+Rescalculs calculsPrix(int choixUber, double kmparcourus, double MinutesEcoulees)
 {
     Rescalculs resultats;
-    resultats.Prixbase = 3.00; //pour UberX et UberPOP
+    resultats.prixBase = 3.00; //pour UberX et UberPOP
     double prixKilometre = 1.80; //pour UberX
     double prixMinute = 0.30; //pour UberX et UberPOP
     double prixMinimum = 6.00; //pour UberX et UberPOP
-    if (ChoixUber == 3){
-        resultats.Prixbase = 8.00;
+    if (choixUber == 3){
+        resultats.prixBase = 8.00;
         prixKilometre = 3.60;
         prixMinute = 0.60;
         prixMinimum = 15.00;
     }
-    else if (ChoixUber == 2){
+    else if (choixUber == 2){
         prixKilometre = 1.35;
     }
-
-    resultats.Prixdistance = prixKilometre * kmparcourus;
-    resultats.Prixminute = prixMinute * MinutesEcoulees;
-    resultats.Prixfinal = resultats.Prixbase + resultats.Prixdistance + resultats.Prixminute;
-    resultats.Prixfacture = resultats.Prixfinal < prixMinimum? prixMinimum : resultats.Prixfinal;
+    resultats.prixDistance = prixKilometre * kmparcourus;
+    resultats.prixMinute = prixMinute * MinutesEcoulees;
+    resultats.prixFinal = resultats.prixBase + resultats.prixDistance + resultats.prixMinute;
+    resultats.prixFacture = resultats.prixFinal < prixMinimum ? prixMinimum : resultats.prixFinal;
     return resultats;
 }
 
-double TVACalcul(double TauxTVA, double Prix) { return Prix - (Prix / (1 + TauxTVA)); }
+//calcul de la TVA
+double TVACalcul(double TauxTVA, double Prix)
+{
+    return Prix - (Prix / (1 + TauxTVA));
+}
 
-void UberShow(const string typeUber, const char horizontal, const char TotalWidht) {
-    string firsthalfword = typeUber.substr(0,typeUber.length()/2);
-    string secondhalfword = typeUber.substr(typeUber.length()/2,typeUber.length()/2 + 1);
+//affichge du type d'Uber
+void uberShow(const string typeUber, const char horizontal, const char TotalWidht) {
+    string firstHalfWord = typeUber.substr(0, typeUber.length() / 2);
+    string secondHalfWord = typeUber.substr(typeUber.length() / 2, typeUber.length() / 2 + 1);
     if((TotalWidht % 2)/*paire?*/ == 0)
     {
-        cout << horizontal << right << setw(TotalWidht / 2 - 1) << firsthalfword << left << setw(TotalWidht / 2 - 1)
-             << secondhalfword << horizontal << endl;
+        cout << horizontal << right << setw(TotalWidht / 2 - 1) << firstHalfWord << left << setw(TotalWidht / 2 - 1)
+             << secondHalfWord << horizontal << endl;
     }
     else
     {
-        cout << horizontal << right << setw(TotalWidht / 2 - 1) << firsthalfword << left << setw(TotalWidht / 2 - 1)
-             << secondhalfword <<' '<< horizontal << endl;
+        cout << horizontal << right << setw(TotalWidht / 2 - 1) << firstHalfWord << left << setw(TotalWidht / 2 - 1)
+             << secondHalfWord << ' ' << horizontal << endl;
     }
-
 }
 
-void TextNum( const char horizontal, const char SEPARATOR, const char TotalWidht, string text, double Num )
+//affichage des textes avec chiffres
+void textNum(const char horizontal, const char SEPARATOR, const char TotalWidht, string text, double Num )
 {
-    const char space = ' ';
-    cout << setfill(space);
+    const char SPACE = ' ';
+    cout << setfill(SPACE);
 
     if((TotalWidht % 3)/*divisible par 3?*/ == 0){
-        cout << horizontal << space << left << setw(TotalWidht*2/3-4/*2 spaces*/) << text  << space << SEPARATOR
-             << space << right << setw(TotalWidht/3 - 3) << Num << space << horizontal << endl;
+        cout << horizontal << SPACE << left << setw(TotalWidht * 2 / 3 - 4/*2 spaces*/) << text << SPACE << SEPARATOR
+             << SPACE << right << setw(TotalWidht / 3 - 3) << Num << SPACE << horizontal << endl;
     }
     else
     {
-        cout << horizontal << space << left << setw(TotalWidht*2/3-4/*2 spaces*/) << text  << space << SEPARATOR
-             << space << right << setw(TotalWidht/3 - 2) << Num << space << horizontal << endl;
+        cout << horizontal << SPACE << left << setw(TotalWidht * 2 / 3 - 4/*2 spaces*/) << text << SPACE << SEPARATOR
+             << SPACE << right << setw(TotalWidht / 3 - 2) << Num << SPACE << horizontal << endl;
     }
 }
 
-void TextNum( const char horizontal, const char SEPARATOR, const char TotalWidht, string text, double Num,string unite )
+//affichage des textes avec chiffres et unités
+void textNum(const char horizontal, const char SEPARATOR, const char TotalWidht, string text, double Num, string unite )
 {
-    const char space = ' ';
-    cout << setfill(space);
+    const char SPACE = ' ';
+    cout << setfill(SPACE);
     if((TotalWidht % 3)/*divisible par 3?*/ == 0) {
-        cout << horizontal << space << left << setw(TotalWidht * 2 / 3 - 4/*2 spaces*/) << text << space << SEPARATOR
-             << space << right << setw(TotalWidht / 3 - (4 + unite.length())) << Num << space
-             << unite << space << horizontal << endl;
+        cout << horizontal << SPACE << left << setw(TotalWidht * 2 / 3 - 4/*2 spaces*/) << text << SPACE << SEPARATOR
+             << SPACE << right << setw(TotalWidht / 3 - (4 + unite.length())) << Num << SPACE
+             << unite << SPACE << horizontal << endl;
     }
     else
     {
-        cout << horizontal << space << left << setw(TotalWidht * 2 / 3 - 4/*2 spaces*/) << text << space << SEPARATOR
-             << space << right << setw(TotalWidht / 3 - (3 + unite.length())) << Num << space
-             << unite << space << horizontal << endl;
+        cout << horizontal << SPACE << left << setw(TotalWidht * 2 / 3 - 4/*2 spaces*/) << text << SPACE << SEPARATOR
+             << SPACE << right << setw(TotalWidht / 3 - (3 + unite.length())) << Num << SPACE
+             << unite << SPACE << horizontal << endl;
     }
 }
 
-void spacetable(const char space, const char horizontal, const char W) {
-
+//affichage des lignes vides
+void spaceTable(const char space, const char horizontal, const char W)
+{
     cout << horizontal << right << setfill(space) << setw(W-1) << horizontal << endl;
 }
 
-void Verticalbord(const char coin, const char vertical, const char W){
+//affichage de la ligne horizontale de l'encadrage
+void horizontalBord(const char coin, const char vertical, const char W)
+{
     cout << coin << right << setfill(vertical) << setw(W-1) << coin << endl;
 }
 
-double ArrondisD(double value, unsigned char prec)
+//arrondi de la distance aux 100m les plus proches
+double arrondisD(double value, unsigned char prec)
 {
-    double Puissance10 = pow(10., (double)prec);
-    return round(value * Puissance10) / Puissance10;
+    double puissance10 = pow(10., (double)prec);
+    return round(value * puissance10) / puissance10;
 }
