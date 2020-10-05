@@ -6,6 +6,15 @@
 
 using namespace std;
 
+typedef struct
+{
+    double Prixbase;
+    double Prixdistance;
+    double Prixminute;
+    double Prixfinal;
+    double Prixfacture;
+
+}Rescalculs;
 
 //prototypes des fonctions d'affichage et d'arrondi.
 void Verticalbord(const char coin, const char vertical, const char W);
@@ -22,7 +31,9 @@ void UberShow(string typeUber, const char horizontal, const char TotalWidht);
 
 double TVACalcul(double TauxTVA, double Prix);
 
-double CalculsPrix(int ChoixUber, double kmparcourus, double MinutesEcoulees);
+Rescalculs CalculsPrix(int ChoixUber, double kmparcourus, double MinutesEcoulees);
+
+
 
 int main() {
 
@@ -118,41 +129,12 @@ int main() {
         cout << endl;//separation de la question et du tableau
 
         bool CourseMinbool = false;
-        double Prixbase = 3.0;
-        double Prixkm = 0.0;
-        double Prixdistance = 0.0;
-        double Prixtemps = 0.0;
-        double Prixminute = 0.3;
-        double Prixfinal = 0.0;
-        double Prixminimal = 6.0;
-        switch (ChoixUber) {
-            case uberX :
-                Prixkm = 1.8;
-                break;
-            case uberPOP :
-                Prixkm = 1.35;
-                break;
-            case uberBLACK :
-                Prixbase = 8.0;
-                Prixkm = 3.6;
-                Prixminute = 0.6;
-                Prixminimal = 15.0;
-                break;
-
-        }
         //Calculs
-        Prixdistance = kmparcourus * Prixkm;
-        Prixtemps = MinutesEcoulees * Prixminute;
-        Prixfinal = Prixbase + Prixdistance + Prixtemps;
+        Rescalculs resultats;
+        resultats = CalculsPrix(ChoixUber,kmparcourus,MinutesEcoulees);
 
-        if(Prixfinal < Prixminimal)
-        {
-            CourseMinbool = true;
-        }
-        else
-        {
-            TVA = TVACalcul(TauxTVA, Prixfinal);
-        }
+
+
 
         Verticalbord(coin, vertical, TotalWidht);
         spacetable(space, horizontal, TotalWidht);
@@ -170,19 +152,18 @@ int main() {
         cout << fixed << setprecision(2);
 
         spacetable(space, horizontal, TotalWidht);
-        TextNum(horizontal, SEPARATOR,TotalWidht,"Prix de base",Prixbase);
-        TextNum(horizontal, SEPARATOR,TotalWidht,"Prix distance",Prixdistance);
-        TextNum(horizontal, SEPARATOR,TotalWidht,"Prix temps",Prixtemps);
-        TextNum(horizontal, SEPARATOR,TotalWidht,"Total",Prixfinal);
+        TextNum(horizontal, SEPARATOR,TotalWidht,"Prix de base",resultats.Prixbase);
+        TextNum(horizontal, SEPARATOR,TotalWidht,"Prix distance",resultats.Prixdistance);
+        TextNum(horizontal, SEPARATOR,TotalWidht,"Prix temps",resultats.Prixminute);
+        TextNum(horizontal, SEPARATOR,TotalWidht,"Total",resultats.Prixfinal);
         spacetable(space, horizontal, TotalWidht);
-        if(CourseMinbool == true)
+        if(resultats.Prixfinal != resultats.Prixfacture )
         {
-            TextNum(horizontal, SEPARATOR,TotalWidht,"Course minimale",Prixminimal);
+            TextNum(horizontal, SEPARATOR,TotalWidht,"Course minimale",resultats.Prixfacture);
             spacetable(space, horizontal, TotalWidht);
-            Prixfinal = Prixminimal;
-            TVA = TVACalcul(TauxTVA, Prixfinal);
         }
-        TextNum(horizontal, SEPARATOR,TotalWidht,"Prix",Prixfinal);
+        TVA = TVACalcul(TauxTVA, resultats.Prixfacture);
+        TextNum(horizontal, SEPARATOR,TotalWidht,"Prix",resultats.Prixfacture);
         TextNum(horizontal, SEPARATOR,TotalWidht,"(incl. TVA)",TVA);
         spacetable(space, horizontal, TotalWidht);
         Verticalbord(coin, vertical, TotalWidht);
@@ -192,14 +173,15 @@ int main() {
 }
 
 //fonction calculs prix
-double CalculsPrix(int ChoixUber, double kmparcourus, double MinutesEcoulees)
+Rescalculs CalculsPrix(int ChoixUber, double kmparcourus, double MinutesEcoulees)
 {
-    double prixBase = 3.00; //pour UberX et UberPOP
+    Rescalculs resultats;
+    resultats.Prixbase = 3.00; //pour UberX et UberPOP
     double prixKilometre = 1.80; //pour UberX
     double prixMinute = 0.30; //pour UberX et UberPOP
     double prixMinimum = 6.00; //pour UberX et UberPOP
     if (ChoixUber == 3){
-        prixBase = 8.00;
+        resultats.Prixbase = 8.00;
         prixKilometre = 3.60;
         prixMinute = 0.60;
         prixMinimum = 15.00;
@@ -207,11 +189,12 @@ double CalculsPrix(int ChoixUber, double kmparcourus, double MinutesEcoulees)
     else if (ChoixUber == 2){
         prixKilometre = 1.35;
     }
-    double prixDistance = prixKilometre * kmparcourus;
-    double prixTemps = prixMinute * MinutesEcoulees;
-    double prixCourse = prixBase + prixDistance + prixTemps;
-    prixCourse = prixCourse < prixMinimum? prixCourse = prixMinimum : prixCourse;
-    return prixCourse;
+
+    resultats.Prixdistance = prixKilometre * kmparcourus;
+    resultats.Prixminute = prixMinute * MinutesEcoulees;
+    resultats.Prixfinal = resultats.Prixbase + resultats.Prixdistance + resultats.Prixminute;
+    resultats.Prixfacture = resultats.Prixfinal < prixMinimum? prixMinimum : resultats.Prixfinal;
+    return resultats;
 }
 
 double TVACalcul(double TauxTVA, double Prix) { return Prix - (Prix / (1 + TauxTVA)); }
@@ -247,6 +230,7 @@ void TextNum( const char horizontal, const char SEPARATOR, const char TotalWidht
              << space << right << setw(TotalWidht/3 - 2) << Num << space << horizontal << endl;
     }
 }
+
 void TextNum( const char horizontal, const char SEPARATOR, const char TotalWidht, string text, double Num,string unite )
 {
     const char space = ' ';
