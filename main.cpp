@@ -6,7 +6,7 @@
 
 using namespace std;
 
-typedef struct
+typedef struct// Structure pour renvoyer les calculs du prix
 {
     double prixBase;
     double prixDistance;
@@ -43,24 +43,20 @@ int main() {
         cin >> choixUber;
         if(choixUber >= 1 && choixUber <= 3) continue;
         cout << "Valeur incorrecte. Reessayez." << endl; //si le num entré n'est pas 1,2 ou 3 alors on envoie un message
-                                                         //d'erreur
+        //d'erreur
     }while(choixUber < 1 || choixUber > 3); //tant que le numéro entré n'est pas le bon (1,2 ou 3) alors on continue de
-                                            //la première question
+    //la première question
 
     cout << "Combien de minutes ecoulees?" << endl;
     double minutesEcoulees;
     cin >> minutesEcoulees;
     minutesEcoulees = int(ceil(minutesEcoulees)); //arrondi tempsEcoulees au supérieur ensuite converti en int
-    //j'ai utilisé mon calcul d'arrondi, il est plus simple et il n'y a pas de if. ça passe le code check
-    /*if((minutesEcoulees - (int)minutesEcoulees) > 0.0)
-    {
-        minutesEcoulees = (int)minutesEcoulees + 1;
-    }*/
 
-    //liaison de l'Uber(string) qui correspond à son chiffre(int) afin de pouvoir afficher le string pas l'int
+    //enumeration afin de faciliter la lecture du choix Uber.
     enum posUber { uberX = 1, uberPOP, uberBLACK };
     string typeUber;
-    if (choixUber == uberX) {
+
+    if (choixUber == uberX) {//Formatage du string typeUber avec la chaîne de caractere correspondante au choix
         typeUber =  "uberX";
     } else if (choixUber == uberPOP) {
         typeUber =  "uberPOP";
@@ -73,12 +69,12 @@ int main() {
         return 1;
     }
 
-    //variables
+    //variables d'affichage
     const char SPACE = ' ';
     const char COIN = '+';
     const char HORIZONTAL = '-';
     const char VERTICAL = '|';
-    const char TOTAL_WIDHT = 30; //largeur total du ticket
+    const char TOTAL_WIDHT = 30; //largeur totale du ticket
     const char SEPARATOR = ':';
     double tauxTva = 0.08;
     double TVA = 0;
